@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+// Force Next.js to treat this route as fully dynamic at runtime
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const orders = await prisma.order.findMany({
