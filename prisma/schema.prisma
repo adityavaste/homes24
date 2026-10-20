@@ -1,0 +1,62 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Your existing models remain the same
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("USER") // "USER" or "ADMIN"
+  phone     String?
+  orders    Order[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  title         String
+  category      String
+  price         Float
+  originalPrice Float
+  condition     String
+  rating        Float    @default(4.8)
+  warranty      String   @default("1-Year Warranty")
+  image         String
+  inStock       Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Order {
+  id          String      @id @default(uuid())
+  fullName    String
+  phone       String
+  street      String
+  city        String
+  pincode     String
+  totalAmount Float
+  status      String      @default("PENDING")
+  userId      String?
+  user        User?       @relation(fields: [userId], references: [id])
+  items       OrderItem[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  title     String
+  price     Float
+  quantity  Int
+}
