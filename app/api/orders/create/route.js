@@ -21,6 +21,7 @@ export async function POST(req) {
         items: {
           create: items.map((item) => ({
             title: item.title,
+            productId: item.id || item.productId,
             price: item.price,
             quantity: item.quantity,
             image: item.image,
