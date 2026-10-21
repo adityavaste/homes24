@@ -9,6 +9,7 @@ export async function POST(req) {
       return NextResponse.json({ message: "Invalid order data" }, { status: 400 });
     }
 
+    // 1. Create Order in Database
     const newOrder = await prisma.order.create({
       data: {
         userId,
@@ -24,12 +25,20 @@ export async function POST(req) {
             title: item.title,
             price: parseFloat(item.price),
             quantity: parseInt(item.quantity),
-            // REMOVED image here because OrderItem table doesn't have it
           })),
         },
       },
       include: { items: true },
     });
+
+    // 2. Mark ordered products as out of stock / booked
+    const productIds = items.map((item) => item.id || item.productId).filter(Boolean);
+    if (productIds.length > 0) {
+      await prisma.product.updateMany({
+        where: { id: { in: productIds } },
+        data: { inStock: false }, // <-- This updates the database flag!
+      });
+    }
 
     return NextResponse.json({ message: "Order placed successfully", order: newOrder }, { status: 201 });
   } catch (error) {
