@@ -76,6 +76,28 @@ export default function AdminDashboardPage() {
     router.push("/admin/login");
   };
 
+  // Status Update Handler
+  const handleStatusChange = async (orderId, newStatus) => {
+    try {
+      const res = await fetch("/api/admin/orders/status", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId, status: newStatus }),
+      });
+
+      if (res.ok) {
+        setOrders(
+          orders.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
+        );
+        alert("Order status updated successfully!");
+      } else {
+        alert("Failed to update order status.");
+      }
+    } catch (err) {
+      console.error("Error updating status:", err);
+    }
+  };
+
   // Add Product Handler
   const handleAddProduct = async (e) => {
     e.preventDefault();
@@ -257,9 +279,21 @@ export default function AdminDashboardPage() {
                             ₹{order.totalAmount?.toLocaleString("en-IN")}
                           </td>
                           <td className="p-4">
-                            <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">
-                              {order.status || "CONFIRMED"}
-                            </span>
+                            <select
+                              value={order.status || "PENDING"}
+                              onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                              className={`text-[10px] font-bold px-2.5 py-1.5 rounded-lg uppercase tracking-wider outline-none cursor-pointer transition ${
+                                order.status === "DELIVERED"
+                                  ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                                  : order.status === "CANCELLED"
+                                  ? "bg-red-500/20 text-red-400 border border-red-500/30"
+                                  : "bg-amber-500/20 text-amber-400 border border-amber-500/30"
+                              }`}
+                            >
+                              <option value="PENDING" className="bg-slate-900 text-amber-400">PENDING</option>
+                              <option value="DELIVERED" className="bg-slate-900 text-emerald-400">DELIVERED</option>
+                              <option value="CANCELLED" className="bg-slate-900 text-red-400">CANCELLED</option>
+                            </select>
                           </td>
                         </tr>
                       ))
