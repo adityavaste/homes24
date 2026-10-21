@@ -109,7 +109,7 @@ export default function SellEstimator() {
                 href="/products"
                 className="bg-white hover:bg-slate-100 text-blue-700 font-bold text-xs sm:text-sm px-5 py-3 rounded-xl flex items-center gap-2 shadow transition"
               >
-                <span>Browse Inventory</span>
+                <span>Explore Store Collection</span>
                 <ArrowRight className="w-4 h-4" />
               </a>
             </div>
