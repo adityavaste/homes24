@@ -162,9 +162,9 @@ export default function ProductsPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {filteredProducts.map((item) => {
-              const discount = Math.round(
-                ((item.originalPrice - item.price) / item.originalPrice) * 100
-              );
+              const discount = item.originalPrice
+                ? Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100)
+                : 0;
               const isBooked = !item.inStock;
 
               return (
@@ -236,9 +236,11 @@ export default function ProductsPage() {
                         <span className="text-xl font-black text-slate-900">
                           ₹{item.price.toLocaleString("en-IN")}
                         </span>
-                        <span className="text-xs text-slate-400 line-through">
-                          ₹{item.originalPrice.toLocaleString("en-IN")}
-                        </span>
+                        {item.originalPrice && (
+                          <span className="text-xs text-slate-400 line-through">
+                            ₹{item.originalPrice.toLocaleString("en-IN")}
+                          </span>
+                        )}
                       </div>
 
                       {/* Action Button */}
