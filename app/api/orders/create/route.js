@@ -9,18 +9,6 @@ export async function POST(req) {
       return NextResponse.json({ message: "Invalid order data" }, { status: 400 });
     }
 
-    // Validate that every item actually has a product ID
-    for (const item of items) {
-      const pId = item.id || item.productId;
-      if (!pId) {
-        console.error("Cart item missing product ID:", item);
-        return NextResponse.json(
-          { message: `Product ID is missing for item: ${item.title}` },
-          { status: 400 }
-        );
-      }
-    }
-
     const newOrder = await prisma.order.create({
       data: {
         userId,
@@ -36,7 +24,7 @@ export async function POST(req) {
             title: item.title,
             price: parseFloat(item.price),
             quantity: parseInt(item.quantity),
-            image: item.image || "",
+            // REMOVED image here because OrderItem table doesn't have it
           })),
         },
       },
